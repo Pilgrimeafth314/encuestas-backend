@@ -1,0 +1,12 @@
+Dockerfile
+docker-compose.yml
+.git
+node_modules/
+dist
+.env
+.env.local
+.gitignore
+.editorconfig
+.prettierrc
+README.md
+nest-cli.json
