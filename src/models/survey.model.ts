@@ -38,7 +38,6 @@ export class Survey {
   @Prop({ type: () => [Question] })
   questions: Question[];
 
-
   @Prop({
     type: Date,
     default: () => new Date(),

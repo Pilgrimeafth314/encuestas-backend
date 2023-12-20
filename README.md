@@ -87,6 +87,34 @@ docker compose -f docker-compose.yml build
 docker compose -f docker-compose.yml up -d
 ```
 
+### Serverless
+Read more of [Serverless](https://www.serverless.com)
+
+For test deploy using serverless in local use this command:
+```bash
+sls offline
+```
+
+For deploy directly in AWS Lambda you need authentication from user with console permissions in AWS, need first compile project
+
+```bash
+npm run build
+```
+
+after, deploy project in AWS using serverless
+
+```bash
+sls deploy
+```
+
+> .[!WARNING].
+> Automatic deployment
+> Be careful when committing to the main branch, these changes will be deployed to AWS automatically
+> 
+
+> .[!INFO].
+> Lack the Github Actions - CI/CD implementation
+> 
 
 ## Stay in touch
 

@@ -1,27 +1,33 @@
-import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 import { SurveysService } from '../services/surveys.service';
+import { CreatorAccess } from '../decorators/creator.decorator';
+import { GeneralAuthGuard } from '../guards/auth.guard';
 
 @Controller('info')
 //Decoradores desactivados para poder hacer pruebas en development
-//@UseGuards(GeneralAuthGuard)
+@UseGuards(GeneralAuthGuard)
 export class SurveyGraphicsController {
-  constructor(
-    private surveysService: SurveysService
-  ) {}
+  constructor(private surveysService: SurveysService) {}
 
   @Get('/chartdata/:id')
-  //@CreatorAccess()
+  @CreatorAccess()
   async findOne(@Param('id') id: string) {
     const survey = await (
       await this.surveysService.findOne(id)
     ).populate('answers');
     if (!survey) throw new NotFoundException('Encuesta no encontrada');
 
-    return await this.testa(survey.questions, survey.answers);
+    return await this.buildData(survey.questions, survey.answers);
   }
 
   @Get('/answers/:id')
-  //@CreatorAccess()
+  @CreatorAccess()
   async findAnswersPerSurvey(@Param('id') id: string) {
     const survey = await (
       await this.surveysService.findOne(id)
@@ -64,7 +70,7 @@ export class SurveyGraphicsController {
     return await transformarDatos(survey.answers, survey.questions);
   }
 
-  async testa(questions, documents) {
+  async buildData(questions, documents) {
     const questionResponseCounts = {};
 
     questions.forEach(question => {
@@ -76,7 +82,7 @@ export class SurveyGraphicsController {
     });
 
     documents.forEach(document => {
-      document.answers.forEach((answer, index) => {
+      document.answers.forEach(answer => {
         const idQuestion = answer.id_question;
 
         if (!questionResponseCounts[idQuestion]) {
@@ -102,13 +108,13 @@ export class SurveyGraphicsController {
         const labels = question.options.map(option => option.title);
         const data = Object.values(responseCount);
 
-        // Estructura de datos para cada pregunta
+        // Estructura los datos para cada pregunta
         const bgColors = [];
         const brColors = [];
         data.forEach(() => {
           const a = this.getRandomColor();
           bgColors.push(a.fill);
-          brColors.push(a.border)
+          brColors.push(a.border);
         });
         const questionData = {
           labels: labels,

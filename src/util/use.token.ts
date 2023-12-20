@@ -1,4 +1,4 @@
-import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -40,6 +40,6 @@ export const useToken = async (token: string): Promise<string | IUseToken> => {
       is_student: coincidence !== null,
     };
   } catch (e) {
-    return 'Token Invalido'
+    return 'Token Invalido';
   }
 };

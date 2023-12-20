@@ -11,14 +11,13 @@ import { IUseToken, useToken } from 'src/util/use.token';
 
 @Injectable()
 export class GeneralAuthGuard implements CanActivate {
-  constructor(
-    private readonly reflector: Reflector,
-  ) {}
+  constructor(private readonly reflector: Reflector) {}
+
   async canActivate(context: ExecutionContext) {
     const isCreator = this.reflector.get<boolean>(
       CREATOR_KEY,
       context.getHandler(),
-    )
+    );
     const req = context.switchToHttp().getRequest<Request>();
 
     const token = req.headers['authorization'];
@@ -36,7 +35,7 @@ export class GeneralAuthGuard implements CanActivate {
     req.name = manageToken.name;
 
     if (isCreator && manageToken.is_student)
-      throw new UnauthorizedException('No tienes permiso para acceder')
+      throw new UnauthorizedException('No tienes permiso para acceder');
 
     return true;
   }

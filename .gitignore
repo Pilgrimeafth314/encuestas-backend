@@ -30,5 +30,10 @@ lerna-debug.log*
 # IDE - VSCode
 .vscode/*
 
+#SERVERLESS STUFF
+admin.env
 .env
+_meta
+.serverless
+
 mongodb-backup

@@ -4,6 +4,10 @@ import { SurveysModule } from './modules/surveys/surveys.module';
 import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  imports: [TypegooseModule.forRoot(process.env.MONGO_URI), SurveysModule, AuthModule],
+  imports: [
+    TypegooseModule.forRoot(process.env.MONGO_URI),
+    SurveysModule,
+    AuthModule,
+  ],
 })
 export class AppModule {}

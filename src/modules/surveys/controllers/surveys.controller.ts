@@ -8,15 +8,18 @@ import {
   Param,
   NotFoundException,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { SurveysService } from '../services/surveys.service';
 import { CreateSurveyDto } from 'src/dto/create-survey.dto';
 import { UpdateSurveyDto } from 'src/dto/update-survey.dto';
 import { QuestionsService } from '../services/questions.service';
+import { GeneralAuthGuard } from '../guards/auth.guard';
+import { CreatorAccess } from '../decorators/creator.decorator';
 
 @Controller('surveys')
 //Decoradores desactivados para poder hacer pruebas en development
-//@UseGuards(GeneralAuthGuard)
+@UseGuards(GeneralAuthGuard)
 export class SurveysController {
   constructor(
     private surveysService: SurveysService,
@@ -24,13 +27,13 @@ export class SurveysController {
   ) {}
 
   @Get()
-  //@CreatorAccess()
+  @CreatorAccess()
   async findAll() {
     return await this.surveysService.findAll();
   }
 
   @Get(':id')
-  //@CreatorAccess()
+  @CreatorAccess()
   async findOne(@Param('id') id: string) {
     const survey = await this.surveysService.findOne(id);
     if (!survey) throw new NotFoundException('Encuesta no encontrada');
@@ -38,7 +41,7 @@ export class SurveysController {
   }
 
   @Post()
-  //@CreatorAccess()
+  @CreatorAccess()
   async create(@Body() body: CreateSurveyDto) {
     try {
       await this.surveysService.create(body);
@@ -57,19 +60,19 @@ export class SurveysController {
   }
 
   @Delete(':id')
-  //@CreatorAccess()
+  @CreatorAccess()
   async delete(@Param('id') id: string) {
     const survey = await this.surveysService.delete(id);
     if (!survey) throw new NotFoundException('Encuesta no encontrada');
 
-    survey.answers.forEach(answerId => {
+    survey.value.answers.forEach(answerId => {
       this.questionsService.delete(answerId._id.toString());
     });
     return await this.surveysService.findAll();
   }
 
   @Put(':id')
-  //@CreatorAccess()
+  @CreatorAccess()
   async update(@Param('id') id: string, @Body() body: UpdateSurveyDto) {
     const survey = await this.findOne(id);
 
@@ -81,7 +84,7 @@ export class SurveysController {
     }
 
     if (body.questions.length === 0) {
-      throw new BadRequestException('Debes colocar almenos unas pregunta.')
+      throw new BadRequestException('Debes colocar almenos unas pregunta.');
     }
 
     const surveyUpdated = await this.surveysService.update(id, body);
